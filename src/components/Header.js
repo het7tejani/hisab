@@ -31,7 +31,7 @@ export function Header() {
     <header className="header" id="app-header">
       <div className="header__brand">
         <div className="header__logo">📒</div>
-        <h1 className="header__title">Hisab Ledger</h1>
+        <h1 className="header__title">Hisab</h1>
       </div>
       <time className="header__date">{dateStr}</time>
     </header>

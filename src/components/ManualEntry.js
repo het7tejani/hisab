@@ -246,7 +246,7 @@ export function ManualEntry({ onAdd, currentMode }) {
               gap: '6px',
             }}
           >
-            📦 Log Product Import
+            IN
           </button>
           <button
             type="button"
@@ -268,7 +268,7 @@ export function ManualEntry({ onAdd, currentMode }) {
               gap: '6px',
             }}
           >
-            💸 Pay Due (Cut-by-Cut)
+            💸 ચુકવણી 
           </button>
         </div>
       )}
