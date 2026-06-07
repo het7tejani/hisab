@@ -65,7 +65,7 @@ function App() {
             <small style={{ color: 'var(--text-muted)' }}>{error}</small>
           </div>
           <div className="empty-state__hint">
-            Make sure the backend is running on port 5000
+            The free cloud server might be spinning up from sleep mode. Please wait up to a minute or refresh.
           </div>
         </div>
       </div>

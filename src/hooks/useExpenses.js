@@ -21,6 +21,8 @@ export function useExpenses() {
       if (result.success) {
         setTodayData(result);
         setError(null);
+      } else {
+        setError('Server responded with an unsuccessful status.');
       }
     } catch (err) {
       setError(err.message);
