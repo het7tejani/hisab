@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { API_BASE } from '../utils/api';
 
 export function ManualEntry({ onAdd }) {
   // ─── MAIN EXPENSE FORM STATE ──────────────────────────────────────
@@ -21,7 +22,7 @@ export function ManualEntry({ onAdd }) {
 
   const fetchPresets = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/presets'); // Ensure port matches backend
+      const res = await fetch(`${API_BASE}/api/presets`); // Ensure port matches backend
       if (res.ok) {
         const data = await res.json();
         setPresetProducts(data);
@@ -81,7 +82,7 @@ export function ManualEntry({ onAdd }) {
     if (!newPresetName.trim() || !newPresetPrice) return;
 
     try {
-      const res = await fetch('http://localhost:5000/api/presets', {
+      const res = await fetch(`${API_BASE}/api/presets`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -116,7 +117,7 @@ export function ManualEntry({ onAdd }) {
     }
 
     try {
-      const res = await fetch(`http://localhost:5000/api/presets/${id}`, {
+      const res = await fetch(`${API_BASE}/api/presets/${id}`, {
         method: 'DELETE'
       });
 
