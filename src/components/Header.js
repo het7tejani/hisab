@@ -4,6 +4,20 @@ export function formatCurrency(amount) {
   return `₹${Number(amount || 0).toLocaleString('en-IN')}`;
 }
 
+export function isPayment(entry) {
+  if (!entry || !entry.description) return false;
+  const desc = entry.description.toLowerCase();
+  return (
+    desc.includes('repayment') ||
+    desc.includes('repay') ||
+    desc.includes('paid to brother') ||
+    desc.includes('payment to brother') ||
+    desc.includes('pay due') ||
+    desc.includes('due pay') ||
+    desc.includes('payment made')
+  );
+}
+
 export function Header() {
   const now = new Date();
   const dateStr = now.toLocaleDateString('en-IN', {

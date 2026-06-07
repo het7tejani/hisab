@@ -84,6 +84,7 @@ export function useExpenses() {
 
 export function useMonthly(initialMonth) {
   const [month, setMonth] = useState(initialMonth || getCurrentMonth());
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [monthlyData, setMonthlyData] = useState({
     total: 0,
     count: 0,
@@ -92,6 +93,10 @@ export function useMonthly(initialMonth) {
     data: [],
   });
   const [loading, setLoading] = useState(true);
+
+  const refresh = useCallback(() => {
+    setRefreshTrigger((prev) => prev + 1);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -112,7 +117,7 @@ export function useMonthly(initialMonth) {
     return () => {
       cancelled = true;
     };
-  }, [month]);
+  }, [month, refreshTrigger]);
 
   const prevMonth = useCallback(() => {
     const [y, m] = month.split('-').map(Number);
@@ -132,6 +137,7 @@ export function useMonthly(initialMonth) {
     loading,
     prevMonth,
     nextMonth,
+    refresh,
   };
 }
 

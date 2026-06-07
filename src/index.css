@@ -1029,6 +1029,80 @@ body::before {
   padding-top: 2px;
 }
 
+/* ─── HOME/OFFICE MODE SWITCHER ─────────────────────────────────── */
+.mode-toggle {
+  display: flex;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--radius-lg);
+  padding: 5px;
+  border: 1px solid var(--border-subtle);
+  position: relative;
+  overflow: hidden;
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s var(--ease-smooth);
+}
+
+.mode-btn:hover {
+  color: var(--text-primary);
+}
+
+/* Home State Theme colors */
+.mode-btn--active-home {
+  background: rgba(108, 92, 231, 0.15);
+  color: #a29bfe;
+  border: 1px solid rgba(108, 92, 231, 0.3);
+  box-shadow: 0 4px 12px rgba(108, 92, 231, 0.15);
+}
+
+/* Office State Theme colors */
+.mode-btn--active-office {
+  background: rgba(0, 206, 201, 0.15);
+  color: #00cec9;
+  border: 1px solid rgba(0, 206, 201, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 206, 201, 0.15);
+}
+
+/* Customize daily-total panel highlight colors depending on mode */
+.daily-total--home::before {
+  background: var(--gradient-primary) !important;
+}
+.daily-total--office::before {
+  background: var(--gradient-green) !important;
+}
+
+.daily-total--office .daily-total__amount {
+  background: var(--gradient-green) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+.manual-entry__btn--office {
+  background: var(--gradient-green) !important;
+}
+
+.manual-entry__btn--office:hover {
+  box-shadow: 0 0 40px rgba(0, 206, 201, 0.20) !important;
+}
+
 /* ─── RESPONSIVE ─────────────────────────────────────────────────── */
 @media (max-width: 480px) {
   .app {

@@ -1,19 +1,23 @@
 import React, { useState, useCallback } from 'react';
-import Header from './components/Header';
+import Header, { isPayment } from './components/Header';
 import DailyTotal from './components/DailyTotal';
 import EntryList from './components/EntryList';
 import ManualEntry from './components/ManualEntry';
 import MonthlyView from './components/MonthlyView';
-import { useExpenses } from './hooks/useExpenses';
+import { useExpenses, useMonthly } from './hooks/useExpenses';
 
 export default function App() {
-  const { todayData, loading, error, addEntry, deleteEntry } = useExpenses();
+  const { todayData, loading: todayLoading, error, addEntry, deleteEntry } = useExpenses();
+  const { monthlyData, loading: monthlyLoading, refresh: refreshMonthly } = useMonthly();
   const [activeTab, setActiveTab] = useState('today');
+  const [currentMode, setCurrentMode] = useState('home'); // 'home' or 'office'
   const [toast, setToast] = useState({
     visible: false,
     message: '',
     type: '',
   });
+
+  const loading = todayLoading || monthlyLoading;
 
   const showToast = useCallback((message, type = 'success') => {
     setToast({ visible: true, message, type });
@@ -24,24 +28,26 @@ export default function App() {
     async (entry) => {
       try {
         await addEntry(entry);
+        refreshMonthly();
         showToast(`Added ₹${entry.amount} for ${entry.description}`);
       } catch (err) {
         showToast('Failed to add entry', 'error');
       }
     },
-    [addEntry, showToast]
+    [addEntry, refreshMonthly, showToast]
   );
 
   const handleDelete = useCallback(
     async (id) => {
       try {
         await deleteEntry(id);
+        refreshMonthly();
         showToast('Entry deleted');
       } catch (err) {
         showToast('Failed to delete', 'error');
       }
     },
-    [deleteEntry, showToast]
+    [deleteEntry, refreshMonthly, showToast]
   );
 
   if (loading) {
@@ -75,6 +81,25 @@ export default function App() {
     );
   }
 
+  // Filter Today Data depending on Mode Selection (Home/Office)
+  // Non-office entries default to Home/Personal space
+  const filteredTodayData = todayData.data.filter((entry) => {
+    if (currentMode === 'office') {
+      return entry.category === 'office';
+    } else {
+      return entry.category !== 'office';
+    }
+  });
+
+  const filteredTotal = filteredTodayData.reduce((sum, item) => sum + (item.amount || 0), 0);
+  const filteredCount = filteredTodayData.length;
+
+  // Compute monthly dual status for office
+  const monthlyOfficeEntries = (monthlyData?.data || []).filter(entry => entry.category === 'office');
+  const totalImports = monthlyOfficeEntries.filter(entry => !isPayment(entry)).reduce((sum, entry) => sum + (entry.amount || 0), 0);
+  const totalPaid = monthlyOfficeEntries.filter(entry => isPayment(entry)).reduce((sum, entry) => sum + (entry.amount || 0), 0);
+  const netDue = Math.max(0, totalImports - totalPaid);
+
   return (
     <div className="app">
       <Header />
@@ -83,6 +108,24 @@ export default function App() {
       <div className="status-bar">
         <span className="live-dot" />
         <span className="status-bar__text">Auto-refreshing every 15s</span>
+      </div>
+
+      {/* Home / Office Mode Toggle Switcher */}
+      <div className="mode-toggle" id="mode-switcher-container">
+        <button
+          className={`mode-btn ${currentMode === 'home' ? 'mode-btn--active-home' : ''}`}
+          onClick={() => setCurrentMode('home')}
+          id="mode-btn-home"
+        >
+          🏠 Personal Hisab
+        </button>
+        <button
+          className={`mode-btn ${currentMode === 'office' ? 'mode-btn--active-office' : ''}`}
+          onClick={() => setCurrentMode('office')}
+          id="mode-btn-office"
+        >
+          🏢 Office Hisab
+        </button>
       </div>
 
       {/* Tab Navigation */}
@@ -107,17 +150,20 @@ export default function App() {
       {activeTab === 'today' && (
         <>
           <DailyTotal
-            total={todayData.total}
-            count={todayData.count}
-            byCategory={todayData.byCategory}
+            total={filteredTotal}
+            count={filteredCount}
+            currentMode={currentMode}
+            totalImports={totalImports}
+            totalPaid={totalPaid}
+            netDue={netDue}
           />
-          <EntryList entries={todayData.data} onDelete={handleDelete} />
-          <ManualEntry onAdd={handleAdd} />
+          <EntryList entries={filteredTodayData} onDelete={handleDelete} currentMode={currentMode} />
+          <ManualEntry onAdd={handleAdd} currentMode={currentMode} />
         </>
       )}
 
       {/* Monthly View */}
-      {activeTab === 'monthly' && <MonthlyView />}
+      {activeTab === 'monthly' && <MonthlyView currentMode={currentMode} />}
 
       {/* Toast Notification */}
       <div

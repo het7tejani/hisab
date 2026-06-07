@@ -30,6 +30,16 @@ const api = {
     return res.json();
   },
 
+  // Get office summary totals via DB calculations and tracking
+  async getOfficeSummary(month) {
+    const url = month
+      ? `${API_BASE}/api/v1/hisab/office-summary?month=${month}`
+      : `${API_BASE}/api/v1/hisab/office-summary`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Failed to fetch office summary');
+    return res.json();
+  },
+
   // Add manual entry
   async addManualEntry({ amount, description, category, items }) {
     const res = await fetch(`${API_BASE}/api/v1/hisab/manual-entry`, {
