@@ -1,6 +1,6 @@
-// src/api.js
-const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-const API_BASE = isLocal ? 'https://hvetsna-data.onrender.com' : '';
+// src/utils/api.js
+const isVercel = window.location.hostname.includes('vercel.app');
+const API_BASE = isVercel ? '' : 'https://hvetsna-data.onrender.com';
 
 const api = {
   // Get today's entries + summary

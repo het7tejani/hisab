@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useMonthly } from '../hooks/useExpenses';
-import { formatCurrency, getCategoryColor } from './Header';
+import { formatCurrency } from './Header';
 
 const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -15,7 +15,7 @@ export function MonthlyView() {
 
   // Chronologically sort data into daily ledger buckets
   const structuralDayLogs = useMemo(() => {
-    const rawEntries = monthlyData.data || []; 
+    const rawEntries = monthlyData.data || [];
     const groups = {};
 
     rawEntries.forEach((entry) => {
@@ -24,7 +24,7 @@ export function MonthlyView() {
         groups[targetDate] = {
           dateString: targetDate,
           totalSpend: 0,
-          records: []
+          records: [],
         };
       }
       groups[targetDate].records.push(entry);
@@ -37,7 +37,7 @@ export function MonthlyView() {
 
   if (loading) {
     return (
-      <div className="loading">
+      <div className="loading" style={{ margin: 'var(--space-2xl) 0' }}>
         <div className="loading__spinner" />
         <div className="loading__text">Loading historical hisab...</div>
       </div>
@@ -47,14 +47,14 @@ export function MonthlyView() {
   return (
     <div className="monthly" id="monthly-view">
       {/* Month Navigation Row Control */}
-      <div className="monthly__header">
+      <div className="monthly__header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-md)' }}>
         <button className="monthly__nav-btn" onClick={prevMonth} aria-label="Prev month">←</button>
         <span className="monthly__month-label">{monthLabel}</span>
         <button className="monthly__nav-btn" onClick={nextMonth} aria-label="Next month">→</button>
       </div>
 
       {/* Aggregate Cumulative Total Card Summary */}
-      <div className="monthly__total-card">
+      <div className="monthly__total-card" style={{ marginBottom: 'var(--space-md)' }}>
         <div className="monthly__total-label">Monthly Total Accumulated</div>
         <div className="monthly__total-amount">
           {formatCurrency(monthlyData.total || 0)}
@@ -64,7 +64,7 @@ export function MonthlyView() {
       {/* Unified Timeline Stack List View */}
       <section className="entries-section">
         <h3 className="entries-section__title">📅 Chronological Statement Ledgers</h3>
-        
+
         {structuralDayLogs.length === 0 ? (
           <div className="empty-state">
             <div className="empty-state__icon">📊</div>
@@ -75,7 +75,7 @@ export function MonthlyView() {
             const humanReadableDay = new Date(dayGroup.dateString).toLocaleDateString('en-IN', {
               day: 'numeric',
               month: 'short',
-              weekday: 'short'
+              weekday: 'short',
             });
 
             return (
@@ -92,7 +92,7 @@ export function MonthlyView() {
                     <div key={entry._id} className="statement-row">
                       <div style={{ flex: 1, minWidth: 0, paddingRight: '12px' }}>
                         <div className="statement-row__desc">{entry.description}</div>
-                        
+
                         {/* Nested Itemized Breakdown Row Chips */}
                         {entry.items && entry.items.length > 0 && (
                           <div className="statement-row__sub-items">
@@ -104,10 +104,9 @@ export function MonthlyView() {
                           </div>
                         )}
                       </div>
-                      
-                      <div 
-                        className="statement-row__amount" 
-                        style={{ color: getCategoryColor(entry.category) }}
+
+                      <div
+                        className="statement-row__amount"
                       >
                         {formatCurrency(entry.amount)}
                       </div>

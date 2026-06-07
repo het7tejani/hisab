@@ -1,16 +1,19 @@
 import React, { useState, useCallback } from 'react';
-import './index.css';
-import { Header } from './components/Header';
-import { DailyTotal } from './components/DailyTotal';
-import { EntryList } from './components/EntryList';
-import { ManualEntry } from './components/ManualEntry';
-import { MonthlyView } from './components/MonthlyView';
+import Header from './components/Header';
+import DailyTotal from './components/DailyTotal';
+import EntryList from './components/EntryList';
+import ManualEntry from './components/ManualEntry';
+import MonthlyView from './components/MonthlyView';
 import { useExpenses } from './hooks/useExpenses';
 
-function App() {
+export default function App() {
   const { todayData, loading, error, addEntry, deleteEntry } = useExpenses();
   const [activeTab, setActiveTab] = useState('today');
-  const [toast, setToast] = useState({ visible: false, message: '', type: '' });
+  const [toast, setToast] = useState({
+    visible: false,
+    message: '',
+    type: '',
+  });
 
   const showToast = useCallback((message, type = 'success') => {
     setToast({ visible: true, message, type });
@@ -129,5 +132,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

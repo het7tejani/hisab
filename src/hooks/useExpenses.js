@@ -25,7 +25,7 @@ export function useExpenses() {
         setError('Server responded with an unsuccessful status.');
       }
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'An unknown error occurred.');
     } finally {
       setLoading(false);
     }
@@ -42,9 +42,9 @@ export function useExpenses() {
   }, [fetchToday]);
 
   const addEntry = useCallback(
-    async ({ amount, description, category }) => {
+    async ({ amount, description, category, items }) => {
       try {
-        const result = await api.addManualEntry({ amount, description, category });
+        const result = await api.addManualEntry({ amount, description, category, items });
         if (result.success) {
           await fetchToday(); // refresh immediately
         }
@@ -89,6 +89,7 @@ export function useMonthly(initialMonth) {
     count: 0,
     byCategory: {},
     byDate: {},
+    data: [],
   });
   const [loading, setLoading] = useState(true);
 

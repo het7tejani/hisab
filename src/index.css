@@ -259,47 +259,6 @@ body::before {
   border-radius: 50%;
 }
 
-/* Category colors */
-.cat-food {
-  background-color: #fdcb6e;
-}
-
-.cat-transport {
-  background-color: #74b9ff;
-}
-
-.cat-fuel {
-  background-color: #e17055;
-}
-
-.cat-groceries {
-  background-color: #00b894;
-}
-
-.cat-medicine {
-  background-color: #ff6b6b;
-}
-
-.cat-shopping {
-  background-color: #fd79a8;
-}
-
-.cat-bills {
-  background-color: #a29bfe;
-}
-
-.cat-entertainment {
-  background-color: #ffeaa7;
-}
-
-.cat-chai {
-  background-color: #e17055;
-}
-
-.cat-misc {
-  background-color: #636e72;
-}
-
 /* ─── TAB NAV ────────────────────────────────────────────────────── */
 .tabs {
   display: flex;
@@ -431,10 +390,6 @@ body::before {
   display: flex;
   align-items: center;
   gap: 3px;
-}
-
-.entry-card__source--voice {
-  color: var(--accent-green);
 }
 
 .entry-card__amount {
@@ -701,63 +656,6 @@ body::before {
   text-align: right;
 }
 
-/* ─── DAILY CHART ────────────────────────────────────────────────── */
-.daily-chart {
-  margin-top: var(--space-lg);
-}
-
-.daily-chart__title {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: var(--text-muted);
-  font-weight: 600;
-  margin-bottom: var(--space-md);
-}
-
-.daily-chart__bars {
-  display: flex;
-  align-items: flex-end;
-  gap: 3px;
-  height: 100px;
-  padding: 0 var(--space-xs);
-}
-
-.daily-chart__bar {
-  flex: 1;
-  background: var(--gradient-primary);
-  border-radius: 3px 3px 0 0;
-  min-height: 2px;
-  transition: all 0.3s var(--ease-smooth);
-  opacity: 0.7;
-  cursor: pointer;
-  position: relative;
-}
-
-.daily-chart__bar:hover {
-  opacity: 1;
-}
-
-.daily-chart__bar-tooltip {
-  display: none;
-  position: absolute;
-  bottom: calc(100% + 6px);
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-glass);
-  border-radius: var(--radius-sm);
-  padding: 4px 8px;
-  white-space: nowrap;
-  font-size: 0.7rem;
-  color: var(--text-primary);
-  z-index: 10;
-}
-
-.daily-chart__bar:hover .daily-chart__bar-tooltip {
-  display: block;
-}
-
 /* ─── EMPTY STATE ────────────────────────────────────────────────── */
 .empty-state {
   text-align: center;
@@ -856,7 +754,6 @@ body::before {
 }
 
 @keyframes pulse {
-
   0%,
   100% {
     opacity: 1;
@@ -899,13 +796,9 @@ body::before {
   margin: var(--space-md) 0;
 }
 
-/* ─── ITEMIZED RECEIPT EXPANSIONS ────────────────────────────────── */
-
-/* ─── ITEMIZED RECEIPT EXPANSIONS ────────────────────────────────── */
 .item-row {
   display: grid;
-  /* 5 columns: Name, Price, Qty, Total, Remove */
-  grid-template-columns: 2.5fr 1.5fr 60px 70px 32px;
+  grid-template-columns: 2.2fr 1.2fr 102px 70px 32px;
   gap: var(--space-sm);
   align-items: center;
   background: rgba(255, 255, 255, 0.02);
@@ -914,6 +807,16 @@ body::before {
   border: 1px solid rgba(255, 255, 255, 0.03);
   margin-bottom: var(--space-xs);
   animation: slideIn 0.25s var(--ease-smooth) both;
+}
+
+/* Hide number spinner / arrows inside custom quantity picker */
+.qty-picker__input::-webkit-outer-spin-button,
+.qty-picker__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.qty-picker__input {
+  -moz-appearance: textfield;
 }
 
 .item-row__total {
@@ -925,7 +828,6 @@ body::before {
   font-weight: 600;
 }
 
-/* Fix preset creation inputs seen in image_96a89b.png */
 .preset-creator-row {
   display: grid;
   grid-template-columns: 2.5fr 1fr;
@@ -998,10 +900,6 @@ body::before {
 }
 
 /* ─── QUICK PRESET DECK ─────────────────────────────────────────── */
-.preset-section {
-  margin-top: var(--space-lg);
-}
-
 .preset-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -1032,6 +930,9 @@ body::before {
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-primary);
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.25;
 }
 
 .preset-chip__meta {
@@ -1045,13 +946,6 @@ body::before {
   font-family: var(--font-mono);
   color: var(--accent-4);
   font-weight: 600;
-}
-
-.preset-chip__tag {
-  color: var(--text-muted);
-  text-transform: uppercase;
-  font-size: 0.65rem;
-  letter-spacing: 0.5px;
 }
 
 /* ─── CHRONOLOGICAL STATEMENT LINE ITEMS ─────────────────────────── */
@@ -1135,53 +1029,6 @@ body::before {
   padding-top: 2px;
 }
 
-/* ─── PRESET CREATOR GRID LAYOUT ───────────────────────────────── */
-.preset-creator-form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-md);
-}
-
-.preset-creator-row {
-  display: grid;
-  grid-template-columns: 2.5fr 1fr;
-  /* Name gets more space, Price stays compact */
-  gap: var(--space-sm);
-  width: 100%;
-}
-
-@media (max-width: 480px) {
-
-  /* On very narrow screens, stack them beautifully */
-  .preset-creator-row {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 480px) {
-  .item-row {
-    grid-template-columns: 1fr 60px auto 32px;
-    /* row 2: Price, Qty, Total, Remove */
-    grid-template-rows: auto auto;
-    gap: var(--space-sm);
-    padding: var(--space-md);
-  }
-
-  /* Make Item Name span the entire top row */
-  .item-row>input:nth-child(1) {
-    grid-column: 1 / -1;
-  }
-
-  /* Align row total text nicely next to inputs */
-  .item-row__total {
-    align-self: center;
-    text-align: left;
-    font-size: 0.95rem;
-    padding-left: var(--space-xs);
-  }
-}
-
 /* ─── RESPONSIVE ─────────────────────────────────────────────────── */
 @media (max-width: 480px) {
   .app {
@@ -1195,6 +1042,42 @@ body::before {
 
   .entry-card__delete {
     opacity: 0.5;
+  }
+
+  .preset-creator-row {
+    grid-template-columns: 1fr;
+  }
+
+  .item-row {
+    grid-template-columns: 1fr 102px auto 32px;
+    grid-template-rows: auto auto;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+  }
+
+  .preset-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: var(--space-xs);
+  }
+
+  .preset-chip {
+    padding: var(--space-sm);
+  }
+
+  .preset-chip__name {
+    font-size: 0.76rem;
+    line-height: 1.2;
+  }
+
+  .item-row>input:nth-child(1) {
+    grid-column: 1 / -1;
+  }
+
+  .item-row__total {
+    align-self: center;
+    text-align: left;
+    font-size: 0.95rem;
+    padding-left: var(--space-xs);
   }
 }
 

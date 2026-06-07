@@ -15,14 +15,10 @@ export function ManualEntry({ onAdd }) {
   const [newPresetPrice, setNewPresetPrice] = useState('');
   const [newPresetQuantity, setNewPresetQuantity] = useState(1);
 
-  // 1. Fetch Presets on Mount from Database
-  useEffect(() => {
-    fetchPresets();
-  }, []);
-
+  // Fetch Presets from DB
   const fetchPresets = async () => {
     try {
-      const res = await fetch(`${API_BASE}/api/presets`); // Ensure port matches backend
+      const res = await fetch(`${API_BASE}/api/presets`);
       if (res.ok) {
         const data = await res.json();
         setPresetProducts(data);
@@ -33,6 +29,10 @@ export function ManualEntry({ onAdd }) {
       setPresetsLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchPresets();
+  }, []);
 
   // ─── MAIN EXPENSE BUILDER ACTIONS ─────────────────────────────────
   const handleItemLineChange = (index, field, value) => {
@@ -53,26 +53,29 @@ export function ManualEntry({ onAdd }) {
   const injectPresetToForm = (preset) => {
     if (items.length === 1 && items[0].name === '') {
       setItems([
-  {
-    name: preset.name,
-    price: preset.price,
-    quantity: 1
-  }
-]);
+        {
+          name: preset.name,
+          price: String(preset.price),
+          quantity: 1,
+        },
+      ]);
     } else {
-      setItems([...items, {
-  name: preset.name,
-  price: preset.price,
-  quantity: 1
-}]);
+      setItems([
+        ...items,
+        {
+          name: preset.name,
+          price: String(preset.price),
+          quantity: 1,
+        },
+      ]);
     }
   };
 
   const grandTotalAmount = useMemo(() => {
     return items.reduce((sum, item) => {
       const p = parseFloat(item.price) || 0;
-      const q = parseInt(item.quantity) || 1;
-      return sum + (p * q);
+      const q = Number(item.quantity) || 1;
+      return sum + p * q;
     }, 0);
   }, [items]);
 
@@ -88,14 +91,14 @@ export function ManualEntry({ onAdd }) {
         body: JSON.stringify({
           name: newPresetName.trim(),
           price: parseFloat(newPresetPrice),
-          quantity: parseInt(newPresetQuantity) || 1
+          quantity: Number(newPresetQuantity) || 1,
         }),
       });
 
       if (res.ok) {
         const savedPreset = await res.json();
         setPresetProducts([savedPreset, ...presetProducts]);
-        
+
         // Reset builder fields
         setNewPresetName('');
         setNewPresetPrice('');
@@ -111,18 +114,18 @@ export function ManualEntry({ onAdd }) {
 
   const handleDeletePreset = async (id, e) => {
     e.stopPropagation(); // Avoid firing injectPresetToForm triggers
-    
+
     if (!window.confirm('Are you sure you want to permanently delete this quick preset?')) {
       return;
     }
 
     try {
       const res = await fetch(`${API_BASE}/api/presets/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
 
       if (res.ok) {
-        setPresetProducts(presetProducts.filter(p => p._id !== id)); // Mongoose uses _id
+        setPresetProducts(presetProducts.filter((p) => p._id !== id));
       }
     } catch (err) {
       console.error('Failed to delete preset item:', err);
@@ -136,14 +139,14 @@ export function ManualEntry({ onAdd }) {
 
     setSubmitting(true);
 
-    const finalizedSubItems = items.map(item => ({
+    const finalizedSubItems = items.map((item) => ({
       name: item.name.trim(),
       price: parseFloat(item.price) || 0,
-      quantity: parseInt(item.quantity) || 1,
-      total: (parseFloat(item.price) || 0) * (parseInt(item.quantity) || 1),
+      quantity: Number(item.quantity) || 1,
+      total: (parseFloat(item.price) || 0) * (Number(item.quantity) || 1),
     }));
 
-    const autoDescription = finalizedSubItems.map(item => item.name).join(', ') || 'Misc Expense';
+    const autoDescription = finalizedSubItems.map((item) => item.name).join(', ') || 'Misc Expense';
 
     try {
       await onAdd({
@@ -163,11 +166,12 @@ export function ManualEntry({ onAdd }) {
 
   return (
     <div className="manual-entry-block">
-      
-      {/* 0. QUICK PRESET BUTTONS */}
+      {/* QUICK PRESET BUTTONS */}
       {!presetsLoading && presetProducts.length > 0 && (
         <div style={{ marginBottom: 'var(--space-md)' }}>
-          <h3 className="entries-section__title" style={{ fontSize: '0.75rem', marginBottom: '8px' }}>⚡ Quick Add Presets</h3>
+          <h3 className="entries-section__title" style={{ fontSize: '0.75rem', marginBottom: '8px' }}>
+            ⚡ Quick Add Presets
+          </h3>
           <div className="preset-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))' }}>
             {presetProducts.map((product) => (
               <button
@@ -175,10 +179,17 @@ export function ManualEntry({ onAdd }) {
                 type="button"
                 className="preset-chip"
                 onClick={() => injectPresetToForm(product)}
-                style={{ position: 'relative', display: 'flex', flexDirection: 'column', width: '100%', padding: '8px' }}
+                style={{
+                  position: 'relative',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  width: '100%',
+                  padding: '8px',
+                  alignItems: 'stretch',
+                }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
-                  <span className="preset-chip__name" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '85%' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'flex-start', gap: '4px' }}>
+                  <span className="preset-chip__name">
                     {product.name}
                   </span>
                 </div>
@@ -191,13 +202,13 @@ export function ManualEntry({ onAdd }) {
         </div>
       )}
 
-      {/* 1. MAIN DETAILED EXPENSE FORM */}
+      {/* MAIN DETAILED EXPENSE FORM */}
       <form className="manual-entry" onSubmit={handleSubmitExpense} id="manual-entry-form">
         <h2 className="manual-entry__title">Add Detailed Expense</h2>
 
         <div className="item-builder">
           {items.map((item, index) => {
-            const calculatedRowTotal = (parseFloat(item.price) || 0) * (parseInt(item.quantity) || 1);
+            const calculatedRowTotal = (parseFloat(item.price) || 0) * (Number(item.quantity) || 1);
             return (
               <div key={index} className="item-row">
                 <input
@@ -220,18 +231,98 @@ export function ManualEntry({ onAdd }) {
                   step="any"
                   required
                 />
-                <input
-                  type="number"
-                  placeholder="Qty"
-                  className="manual-entry__input"
-                  style={{ width: '100%', textAlign: 'center', paddingLeft: '4px', paddingRight: '4px' }}
-                  value={item.quantity}
-                  onChange={(e) => handleItemLineChange(index, 'quantity', parseInt(e.target.value) || '')}
-                  min="1"
-                  required
-                />
+                <div 
+                  className="qty-picker"
+                  style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    background: 'rgba(255, 255, 255, 0.03)',
+                    border: '1px solid var(--border-subtle)',
+                    borderRadius: 'var(--radius-sm)',
+                    padding: '2px',
+                    height: '36px',
+                    justifyContent: 'space-between'
+                  }}
+                >
+                  <button
+                    type="button"
+                    className="qty-picker__btn"
+                    onClick={() => {
+                      const currentVal = parseInt(item.quantity) || 1;
+                      if (currentVal > 1) {
+                        handleItemLineChange(index, 'quantity', currentVal - 1);
+                      }
+                    }}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      color: 'var(--text-secondary)',
+                      width: '24px',
+                      height: '30px',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '0.9rem',
+                      fontWeight: 'bold',
+                      userSelect: 'none',
+                    }}
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    placeholder="Qty"
+                    className="qty-picker__input"
+                    style={{ 
+                      width: '32px', 
+                      textAlign: 'center', 
+                      border: 'none', 
+                      background: 'transparent', 
+                      color: 'var(--text-primary)',
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: '0.82rem',
+                      fontWeight: '600',
+                      outline: 'none',
+                      padding: '0',
+                    }}
+                    value={item.quantity}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value);
+                      handleItemLineChange(index, 'quantity', isNaN(val) ? '' : Math.max(1, val));
+                    }}
+                    min="1"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="qty-picker__btn"
+                    onClick={() => {
+                      const currentVal = parseInt(item.quantity) || 0;
+                      handleItemLineChange(index, 'quantity', currentVal + 1);
+                    }}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      color: 'var(--text-secondary)',
+                      width: '24px',
+                      height: '30px',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '0.9rem',
+                      fontWeight: 'bold',
+                      userSelect: 'none',
+                    }}
+                  >
+                    ＋
+                  </button>
+                </div>
                 <span className="item-row__total">₹{calculatedRowTotal}</span>
-                
+
                 {items.length > 1 ? (
                   <button
                     type="button"
@@ -267,43 +358,47 @@ export function ManualEntry({ onAdd }) {
         </button>
       </form>
 
-      {/* 2. PERSISTED DATABASE PRESET CREATOR */}
+      {/* PERSISTED DATABASE PRESET CREATOR */}
       <section className="manual-entry" style={{ padding: 'var(--space-md)' }}>
-        <h3 className="entries-section__title" style={{ marginBottom: 'var(--space-sm)' }}>🛠️ Predefine Recurring Items</h3>
-        
+        <h3 className="entries-section__title" style={{ marginBottom: 'var(--space-sm)' }}>
+          🛠️ Predefine Recurring Items
+        </h3>
+
         <form onSubmit={handleAddPreset} style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: 'var(--space-md)' }}>
           <div className="preset-creator-row">
-  <input
-    type="text"
-    placeholder="Item Name (e.g., Petrol)"
-    className="manual-entry__input"
-    value={newPresetName}
-    onChange={(e) => setNewPresetName(e.target.value)}
-    required
-  />
+            <input
+              type="text"
+              placeholder="Item Name (e.g., Petrol)"
+              className="manual-entry__input"
+              value={newPresetName}
+              onChange={(e) => setNewPresetName(e.target.value)}
+              required
+            />
 
-  <input
-    type="number"
-    placeholder="₹ Price"
-    className="manual-entry__input manual-entry__input--amount"
-    value={newPresetPrice}
-    onChange={(e) => setNewPresetPrice(e.target.value)}
-    min="0"
-    step="any"
-    required
-  />
-</div>
-          <button 
-            type="submit" 
-            className="btn-secondary-subtle" 
+            <input
+              type="number"
+              placeholder="₹ Price"
+              className="manual-entry__input manual-entry__input--amount"
+              value={newPresetPrice}
+              onChange={(e) => setNewPresetPrice(e.target.value)}
+              min="0"
+              step="any"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="btn-secondary-subtle"
             style={{ padding: '12px', borderStyle: 'solid', background: 'var(--bg-glass-strong)' }}
           >
             💾 Save Quick Preset to DB
           </button>
         </form>
 
-        <h3 className="entries-section__title" style={{ fontSize: '0.68rem', opacity: '0.7', marginTop: 'var(--space-md)' }}>📋 Saved Database Presets</h3>
-        
+        <h3 className="entries-section__title" style={{ fontSize: '0.68rem', opacity: '0.7', marginTop: 'var(--space-md)' }}>
+          📋 Saved Database Presets
+        </h3>
+
         {presetsLoading ? (
           <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textAlign: 'center', padding: '12px' }}>
             Syncing presets with MongoDB...
@@ -320,15 +415,15 @@ export function ManualEntry({ onAdd }) {
                 className="preset-chip"
                 style={{ position: 'relative', display: 'flex', flexDirection: 'column', width: '100%', cursor: 'default' }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
-                  <span className="preset-chip__name" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '85%' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'flex-start', gap: '4px' }}>
+                  <span className="preset-chip__name">
                     {product.name}
                   </span>
-                  <span 
+                  <span
                     onClick={(e) => handleDeletePreset(product._id, e)}
-                    style={{ color: 'var(--text-muted)', fontSize: '12px', cursor: 'pointer', padding: '2px 4px' }}
-                    onMouseOver={(e) => e.target.style.color = 'var(--accent-red)'}
-                    onMouseOut={(e) => e.target.style.color = 'var(--text-muted)'}
+                    style={{ color: 'var(--text-muted)', fontSize: '12px', cursor: 'pointer', padding: '2px 4px', lineHeight: '1.2' }}
+                    onMouseOver={(e) => (e.target.style.color = 'var(--accent-red)')}
+                    onMouseOut={(e) => (e.target.style.color = 'var(--text-muted)')}
                     title="Delete preset permanently"
                   >
                     ✕
@@ -342,7 +437,6 @@ export function ManualEntry({ onAdd }) {
           </div>
         )}
       </section>
-
     </div>
   );
 }
