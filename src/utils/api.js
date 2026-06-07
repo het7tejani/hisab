@@ -1,5 +1,6 @@
 // src/api.js
-const API_BASE = 'https://hvetsna-data.onrender.com';
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_BASE = isLocal ? 'https://hvetsna-data.onrender.com' : '';
 
 const api = {
   // Get today's entries + summary
@@ -30,11 +31,11 @@ const api = {
   },
 
   // Add manual entry
-  async addManualEntry({ amount, description, category }) {
+  async addManualEntry({ amount, description, category, items }) {
     const res = await fetch(`${API_BASE}/api/v1/hisab/manual-entry`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ amount, description, category }),
+      body: JSON.stringify({ amount, description, category, items }),
     });
     if (!res.ok) throw new Error('Failed to add entry');
     return res.json();

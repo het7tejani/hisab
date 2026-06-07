@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://hvetsna-data.onrender.com/api/:path*"
+    }
+  ]
+}
