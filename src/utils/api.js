@@ -1,4 +1,4 @@
-const API_BASE = process.env.REACT_APP_API_URL || 'https://hvetsna-data.onrender.com';
+const API_BASE = 'https://hvetsna-data.onrender.com';
 
 const api = {
   // Get today's entries + summary
