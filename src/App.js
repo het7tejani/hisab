@@ -9,8 +9,22 @@ import { useExpenses, useMonthly } from './hooks/useExpenses';
 export default function App() {
   const { todayData, loading: todayLoading, error, addEntry, deleteEntry } = useExpenses();
   const { monthlyData, loading: monthlyLoading, refresh: refreshMonthly } = useMonthly();
-  const [activeTab, setActiveTab] = useState('today');
-  const [currentMode, setCurrentMode] = useState('home'); // 'home' or 'office'
+  const [activeTab, setActiveTabState] = useState(() => {
+    return localStorage.getItem('activeTab') || 'today';
+  });
+  const [currentMode, setCurrentModeState] = useState(() => {
+    return localStorage.getItem('currentMode') || 'home';
+  });
+
+  const setActiveTab = useCallback((tab) => {
+    setActiveTabState(tab);
+    localStorage.setItem('activeTab', tab);
+  }, []);
+
+  const setCurrentMode = useCallback((mode) => {
+    setCurrentModeState(mode);
+    localStorage.setItem('currentMode', mode);
+  }, []);
   const [toast, setToast] = useState({
     visible: false,
     message: '',
