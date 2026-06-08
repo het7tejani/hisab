@@ -5,12 +5,11 @@ export function DailyTotal({ total, count, currentMode, totalImports, totalPaid,
   if (currentMode === 'office') {
     return (
       <section className="daily-total daily-total--office" id="daily-total-card">
-        
+        <div className="daily-total__label">How Much Remains to Pay (Net Due)</div>
         <div className="daily-total__amount" style={{ color: 'var(--accent-green)', fontSize: '2.8rem', marginBottom: 'var(--space-xs)' }}>
           {formatCurrency(netDue)}
         </div>
 
-        
         <div className="office-dashboard-mini" style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
@@ -21,7 +20,7 @@ export function DailyTotal({ total, count, currentMode, totalImports, totalPaid,
         }}>
           <div>
             <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>
-              Total
+              Total Product Cost (IN)
             </div>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>
               {formatCurrency(totalImports)}
@@ -29,7 +28,7 @@ export function DailyTotal({ total, count, currentMode, totalImports, totalPaid,
           </div>
           <div>
             <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>
-              Paid 
+              Total Paid
             </div>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: '1.05rem', fontWeight: 700, color: 'var(--accent-green)', marginTop: '2px' }}>
               {formatCurrency(totalPaid)}

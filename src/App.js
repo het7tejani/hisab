@@ -94,11 +94,11 @@ export default function App() {
   const filteredTotal = filteredTodayData.reduce((sum, item) => sum + (item.amount || 0), 0);
   const filteredCount = filteredTodayData.length;
 
-  // Compute monthly dual status for office
-  const monthlyOfficeEntries = (monthlyData?.data || []).filter(entry => entry.category === 'office');
-  const totalImports = monthlyOfficeEntries.filter(entry => !isPayment(entry)).reduce((sum, entry) => sum + (entry.amount || 0), 0);
-  const totalPaid = monthlyOfficeEntries.filter(entry => isPayment(entry)).reduce((sum, entry) => sum + (entry.amount || 0), 0);
-  const netDue = Math.max(0, totalImports - totalPaid);
+  // Compute cumulative (all-time) status for office to carry over across all months
+  const officeCumulative = todayData?.officeCumulative || { totalImports: 0, totalPaid: 0, netDue: 0 };
+  const totalImports = officeCumulative.totalImports;
+  const totalPaid = officeCumulative.totalPaid;
+  const netDue = officeCumulative.netDue;
 
   return (
     <div className="app">
