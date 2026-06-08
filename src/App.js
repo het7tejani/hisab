@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import Header, { isPayment } from './components/Header';
+import Header from './components/Header';
 import DailyTotal from './components/DailyTotal';
 import EntryList from './components/EntryList';
 import ManualEntry from './components/ManualEntry';
@@ -8,7 +8,7 @@ import { useExpenses, useMonthly } from './hooks/useExpenses';
 
 export default function App() {
   const { todayData, loading: todayLoading, error, addEntry, deleteEntry } = useExpenses();
-  const { monthlyData, loading: monthlyLoading, refresh: refreshMonthly } = useMonthly();
+  const { loading: monthlyLoading, refresh: refreshMonthly } = useMonthly();
   const [activeTab, setActiveTabState] = useState(() => {
     return localStorage.getItem('activeTab') || 'today';
   });
